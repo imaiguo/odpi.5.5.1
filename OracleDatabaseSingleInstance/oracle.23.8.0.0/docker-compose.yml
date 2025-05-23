@@ -1,0 +1,15 @@
+
+services:
+  callpredictionserver:
+    image: callprediction:1.0
+    container_name: callprediction
+    restart: always
+    privileged: true
+    command: ["python", "/opt/CallPrediction/RunMain.py"]
+    environment:
+      - TZ=Asia/Shanghai
+      - OPENBLAS_NUM_THREADS=1
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./:/opt/CallPrediction/
+  
