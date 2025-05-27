@@ -1,81 +1,54 @@
-# ODPI-C
+# Oracle Database
 
-Oracle Database Programming Interface for C (ODPI-C) is an open source library
-of C code that simplifies access to Oracle Database for applications written in
-C or C++.  It is a wrapper over [Oracle Call Interface
-(OCI)](http://www.oracle.com/technetwork/database/features/oci/index.html) that
-makes applications and language interfaces easier to develop.
+##  Oracle 连接
 
-ODPI-C supports basic and advanced features of Oracle Database and
-Oracle Client.  See the [homepage](https://oracle.github.io/odpi/) for
-a list.
+登录到system以创建其他用户
 
-## Installation
+```bash
+> sudo docker run -it oracle/database:11.2.0.2-xe  /usr/bin/bash
+> sqlplus /nolog
+SQL> connect / as sysdba
+>
+```
 
-See [ODPI-C Installation](https://oracle.github.io/odpi/doc/installation.html).
+## Oracle 用户管理
 
-## Documentation
+```bash
+SQL> create user username identified by dbuser123;
+SQL> alter user dbuser identified by dbuser123;
+SQL> drop user dbuser;
+>
+```
 
-See the [ODPI-C Documentation](https://oracle.github.io/odpi/doc/index.html) and
-[Release Notes](https://oracle.github.io/odpi/doc/releasenotes.html).
+为用户授权角色\撤销授权
 
-## Samples
+oracle提供三种标准角色（role）:connect/resource和dba.
 
-See [/samples](https://github.com/oracle/odpi/tree/main/samples).
+1. connect role(连接角色)
+临时用户，特指不需要建表的用户，通常只赋予他们connect role.
 
-## Help
+connect是使用oracle简单权限，这种权限只对其他用户的表有访问权限，包括select/insert/update和delete等。
+拥有connect role 的用户还能够创建表、视图、序列（sequence）、簇（cluster）、同义词(synonym)、回话（session）和其他 数据的链（link)。
 
-Please report bugs and ask questions using [GitHub issues](https://github.com/oracle/odpi/issues).
+2. resource role(资源角色)
+更可靠和正式的数据库用户可以授予resource role。
 
-## Tests
+resource提供给用户另外的权限以创建他们自己的表、序列、过程(procedure)、触发器(trigger)、索引(index)和簇(cluster)。
 
-See [/test](https://github.com/oracle/odpi/tree/main/test).
+3. dba role(数据库管理员角色)
+dba role拥有所有的系统权限
 
-## Contributing
+包括无限制的空间限额和给其他用户授予各种权限的能力。
 
-See [CONTRIBUTING](https://github.com/oracle/odpi/blob/main/CONTRIBUTING.md).
+```bash
+> grant connect, resource to dbuser;
+> revoke connect, resource from dbuser;
+>
+```
 
-## Drivers Using ODPI-C
+## Oracle SQL语句
 
-Oracle Drivers:
-* [python-oracledb](https://oracle.github.io/python-oracledb) Python interface (previously known as cx_Oracle).
-* [node-oracledb](https://oracle.github.io/node-oracledb) Node.js module.
 
-Third-party Drivers:
-* [godror](https://github.com/godror/godror) Go Driver.
-* [odpic-raw](https://github.com/leptonyu/odpic-raw)  Haskell Raw Bindings.
-* [oracle-simple](https://github.com/haskell-oracle/oracle-simple) Haskell driver.
-* [ruby-ODPI ](https://github.com/kubo/ruby-odpi) Ruby Interface.
-* [rust-oracle ](https://github.com/kubo/rust-oracle) Driver for Rust.
-* [Oracle.jl](https://github.com/felipenoris/Oracle.jl) Driver for Julia.
-* [oranif](https://github.com/KonnexionsGmbH/oranif) Driver for Erlang.
-* [nimodpi](https://github.com/mikra01/nimodpi) Driver for Nim.
+## Oracle 运维
 
-## Security
 
-Please consult the [security guide](./SECURITY.md) for our responsible security
-vulnerability disclosure process.
-
-## License
-
-Copyright (c) 2016, 2025, Oracle and/or its affiliates.
-
-This software is dual-licensed to you under the Universal Permissive License
-(UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
-2.0 as shown at http://www.apache.org/licenses/LICENSE-2.0. You may choose
-either license.
-
-If you elect to accept the software under the Apache License, Version 2.0,
-the following applies:
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   https://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
