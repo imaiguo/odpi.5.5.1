@@ -5,18 +5,23 @@
 登录到system以创建其他用户
 
 ```bash
-> sudo docker run -it oracle/database:11.2.0.2-xe  /usr/bin/bash
+> sudo docker exec -it oracle /usr/bin/bash
 > sqlplus /nolog
 SQL> connect / as sysdba
->
+> sqlplus sys/11gxe123@127.0.0.1:1521/xe as sysdba
+> sqlplus sys/11gxe123@127.0.0.1:1521/xe
+> sqlplus dbuser/dbuser123@127.0.0.1:1521/xe
+> SELECT * FROM v$version;
+> SELECT TABLE_NAME FROM user_tables;
 ```
 
 ## Oracle 用户管理
 
 ```bash
-SQL> create user username identified by dbuser123;
+SQL> create user dbuser identified by dbuser123;
 SQL> alter user dbuser identified by dbuser123;
-SQL> drop user dbuser;
+SQL> SELECT * FROM ALL_USERS;
+SQL> drop user username;
 >
 ```
 
@@ -40,9 +45,14 @@ dba role拥有所有的系统权限
 
 包括无限制的空间限额和给其他用户授予各种权限的能力。
 
+用户名作为查询条件，必须是大写
+
 ```bash
 > grant connect, resource to dbuser;
 > revoke connect, resource from dbuser;
+> select * from dba_sys_privs where grantee='DBUSER';
+> select * from dba_role_privs where grantee='DBUSER';
+> select * from dba_role_privs where grantee='SYS';
 >
 ```
 
@@ -51,4 +61,31 @@ dba role拥有所有的系统权限
 
 ## Oracle 运维
 
+### a. 执行本地sql脚本 指定utf-8格式文本
 
+```bash
+> cmd
+> set NLS_LANG=SIMPLIFIED CHINESE_CHINA.UTF8
+> export NLS_LANG="SIMPLIFIED CHINESE_CHINA.UTF8"
+> sqlplus dbuser/dbuser123@127.0.0.1:1521/xe
+> @D:\all.sql
+>
+```
+
+### b. 更新表字段数据
+
+```sql
+-- 方式1 120w条数据 75秒执行完成
+> UPDATE SITUATION set TDATE = to_date(DATA_DATE, 'yyyy-mm-dd hh24:mi:ss')
+> -- 方式3 表字段中内容格式转换+保存
+> UPDATE SITUATION T1
+SET TDATE = (
+    SELECT
+        to_date(T2.DATA_DATE, 'yyyy-mm-dd hh24:mi:ss')
+    FROM
+        SITUATION T2
+    WHERE
+        T1.ID = T2.ID
+);
+
+```
