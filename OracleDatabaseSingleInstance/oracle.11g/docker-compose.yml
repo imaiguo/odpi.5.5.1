@@ -1,13 +1,13 @@
 
 services:
-  callpredictionserver:
+  oracleserver:
     image: oracle/database:11.2.0.2-xe
     container_name: oracle11
-    # restart: always
+    restart: always
     shm_size: '1gb'
     environment:
       - TZ=Asia/Shanghai
-      - ORACLE_PWD=prediction123
+      - ORACLE_PWD=11gxe123
     ports:
       - '2023:1521'
       - '8082:8080'
